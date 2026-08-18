@@ -401,11 +401,19 @@ ol {
 
 .disciplines li {
   display: grid;
-  grid-template-columns: var(--icon) 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
   padding-block: 1.25rem;
   border-bottom: 1px solid var(--line);
+}
+
+.disciplines li:has(.icon:not(:empty)) {
+  grid-template-columns: var(--icon) minmax(0, 1fr);
+}
+
+.disciplines li > div {
+  min-width: 0;
 }
 
 .disciplines h3 {
@@ -707,7 +715,9 @@ ol {
 
   .hero-footer,
   .about-grid,
-  .project {
+  .project,
+  .disciplines li,
+  .disciplines li:has(.icon:not(:empty)) {
     grid-template-columns: 1fr;
   }
 
