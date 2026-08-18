@@ -163,7 +163,14 @@ ol {
   -webkit-text-stroke: 0.3px currentColor;
 }
 
-/* Icon frames — empty until SVGs are dropped in */
+/* Icons — hairline marks in currentColor */
+
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
 
 .icon {
   display: inline-flex;
@@ -180,6 +187,8 @@ ol {
 .icon svg {
   width: 100%;
   height: 100%;
+  display: block;
+  overflow: visible;
   object-fit: contain;
 }
 
@@ -613,29 +622,6 @@ ol {
     width: 2.75rem;
     height: 2.75rem;
     margin-right: -0.4rem;
-  }
-
-  .nav-toggle .icon:empty {
-    display: inline-flex;
-    border: 0;
-  }
-
-  .nav-toggle .icon--menu:empty {
-    width: 1.35rem;
-    height: 0.85rem;
-    background: linear-gradient(currentColor, currentColor) 0 0 / 100% 2px
-        no-repeat,
-      linear-gradient(currentColor, currentColor) 0 50% / 100% 2px no-repeat,
-      linear-gradient(currentColor, currentColor) 0 100% / 100% 2px no-repeat;
-  }
-
-  .nav-toggle .icon--close:empty {
-    width: 1.2rem;
-    height: 1.2rem;
-    background: linear-gradient(currentColor, currentColor) center / 100% 2px
-        no-repeat,
-      linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
-    transform: rotate(45deg);
   }
 
   .site-nav {

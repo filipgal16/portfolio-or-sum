@@ -37,10 +37,4 @@ The site will be at `https://filipgal16.github.io/portfolio-or-sum/`.
 
 ## Icons
 
-Icon frames are empty on purpose. See [assets/icons/README.md](assets/icons/README.md) for the list to provide:
-
-- `github`, `mail`, `external`, `arrow`
-- `menu`, `close`
-- `cube`, `code`, `chip`
-
-Prefer 24x24 or 32x32 monochrome SVGs that use `currentColor`.
+Hairline SVGs in [`assets/icons/`](assets/icons), drawn to match the black/white type. They use `currentColor` so they invert with the cubing band.
