@@ -401,15 +401,11 @@ ol {
 
 .disciplines li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: var(--icon) minmax(0, 1fr);
   gap: 1rem;
   align-items: start;
   padding-block: 1.25rem;
   border-bottom: 1px solid var(--line);
-}
-
-.disciplines li:has(.icon:not(:empty)) {
-  grid-template-columns: var(--icon) minmax(0, 1fr);
 }
 
 .disciplines li > div {
@@ -612,10 +608,6 @@ ol {
     --text-stat: clamp(2.5rem, 14vw, 3.5rem);
   }
 
-  .icon:empty {
-    display: none;
-  }
-
   .nav-toggle {
     display: inline-flex;
     width: 2.75rem;
@@ -715,9 +707,7 @@ ol {
 
   .hero-footer,
   .about-grid,
-  .project,
-  .disciplines li,
-  .disciplines li:has(.icon:not(:empty)) {
+  .project {
     grid-template-columns: 1fr;
   }
 
