@@ -1,4 +1,4 @@
-/* Filip Gal — portfolio
+/* Filip Gal portfolio
    Black / white editorial. Cabinet Grotesk + Pencerio. */
 
 :root {
@@ -163,7 +163,7 @@ ol {
   -webkit-text-stroke: 0.3px currentColor;
 }
 
-/* Icons — hairline marks in currentColor */
+/* Icons: hairline marks in currentColor */
 
 .icon-sprite {
   position: absolute;
@@ -490,7 +490,7 @@ ol {
   white-space: nowrap;
 }
 
-/* Cubing — inverted band */
+/* Cubing: inverted band */
 
 .section--invert {
   background: var(--invert-bg);

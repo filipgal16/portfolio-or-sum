@@ -1,4 +1,4 @@
-# Filip Gal — Portfolio
+# Filip Gal | Portfolio
 
 Black-and-white personal site for Filip Gal, CS student at Infotech High School.
 
