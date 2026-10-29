@@ -25,6 +25,12 @@ Then visit `http://localhost:8080`.
 - [Pencerio](https://www.fontshare.com/fonts/pencerio) for script accents
 - No framework, no icon CDN, no emojis
 
+## Raspberry Pi + filipfilip.xyz
+
+To host on your Pi with your domain **filipfilip.xyz** (OVH DNS, nginx, HTTPS):
+
+See **[docs/RASPBERRY-PI-filipfilip.xyz.md](docs/RASPBERRY-PI-filipfilip.xyz.md)** and run `deploy/setup-raspberry-pi.sh` on the Pi.
+
 ## GitHub Pages
 
 Once this repository is public (Pages on a private repo needs GitHub Pro):
