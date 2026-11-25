@@ -83,6 +83,11 @@ export function createRipples(max = 8): Ripples {
 export interface CalmBoxes {
   /** [u0, v0, u1, v1] per box. */
   data: Float64Array;
+  /**
+   * Per box, 0..1: how completely the surface stops there. At 1 the ridges,
+   * the cursor bump and click ripples all fade out, so the dots hold still.
+   */
+  still: Float64Array;
   count: number;
   /** Width of the soft edge, as a fraction of the canvas width and height. */
   featherU: number;
@@ -90,7 +95,13 @@ export interface CalmBoxes {
 }
 
 export function createCalmBoxes(max = 6): CalmBoxes {
-  return { data: new Float64Array(max * 4), count: 0, featherU: 0.04, featherV: 0.04 };
+  return {
+    data: new Float64Array(max * 4),
+    still: new Float64Array(max),
+    count: 0,
+    featherU: 0.04,
+    featherV: 0.04,
+  };
 }
 
 /** Hero: the fold, calmed on the left and under the text, plus cursor bump and ripples. */
@@ -104,15 +115,19 @@ export function heroField(ripples: Ripples, boxes: CalmBoxes): HeightFn {
     const fu = boxes.featherU;
     const fv = boxes.featherV;
     let calm = 0;
+    let still = 0;
     for (let i = 0, a = 0; i < boxes.count; i++, a += 4) {
       const iu = smoothstep(d[a] - fu, d[a], u) * (1 - smoothstep(d[a + 2], d[a + 2] + fu, u));
       if (iu <= 0) continue;
       const iv = smoothstep(d[a + 1] - fv, d[a + 1], v) * (1 - smoothstep(d[a + 3], d[a + 3] + fv, v));
       const c = iu * iv;
       if (c > calm) calm = c;
+      const sc = c * boxes.still[i];
+      if (sc > still) still = sc;
     }
     mask += (0.12 - mask) * calm;
-    return fold(x, y, t) * mask + bump(x, y, f, 0.32, 9) + ripples.sample(x, y, t);
+    const h = fold(x, y, t) * mask + bump(x, y, f, 0.32, 9) + ripples.sample(x, y, t);
+    return still > 0 ? h * (1 - still) : h;
   };
 }
 

@@ -24,9 +24,9 @@ if (hero && heroCanvas) {
   const FEATHER = 56;
   const textParts = ['.brand', '.nav ul', '.hero__title', '.lede'];
 
-  // Behind the small intro paragraph the dots stay but turn a light grey, so
-  // the text reads clearly on top. Box in canvas px: [left, top, right, bottom].
-  const TINT = 0.35;
+  // Behind the small intro paragraph the dots stay but turn a light grey and
+  // the surface there holds still (see calm.still), so the text reads clearly. Box in canvas px: [left, top, right, bottom].
+  const TINT = 0.18;
   const TINT_PAD = 12;
   const TINT_FEATHER = 28;
   const lede = [0, 0, 0, 0];
@@ -67,6 +67,7 @@ if (hero && heroCanvas) {
       calm.data[n * 4 + 1] = (b.top - PAD - c.top) / c.height;
       calm.data[n * 4 + 2] = (b.right + PAD - c.left) / c.width;
       calm.data[n * 4 + 3] = (b.bottom + PAD - c.top) / c.height;
+      calm.still[n] = sel === '.lede' ? 1 : 0;
       if (sel === '.lede') {
         lede[0] = b.left - TINT_PAD - c.left;
         lede[1] = b.top - TINT_PAD - c.top;
