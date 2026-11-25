@@ -146,12 +146,23 @@ a {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 12px 24px;
+  align-items: center;
+  gap: 10px 24px;
 }
 
+/* Each item sits on a small solid paper tag so the dots never run through
+   the thin mono letters. The negative margins keep the text itself lined up
+   with the page edges and the headline below. */
 .topbar a {
+  display: inline-block;
+  padding: 0.45em 0.7em;
+  background: var(--paper);
+  font-weight: 500;
   text-decoration: none;
+}
+
+.topbar .brand {
+  margin-left: -0.7em;
 }
 
 .topbar a:hover {
@@ -160,10 +171,13 @@ a {
 
 .nav ul {
   display: flex;
-  gap: clamp(16px, 2.4vw, 32px);
-  margin: 0;
+  flex-wrap: wrap;
+  gap: clamp(4px, 0.8vw, 10px);
+  margin: 0 -0.7em;
   padding: 0;
   list-style: none;
+  /* Same size as the links, so -0.7em here equals their 0.7em padding. */
+  font-size: var(--label-size);
 }
 
 /* Kaushan Script: one weight, brush letters, so normal tracking and no case change. */
