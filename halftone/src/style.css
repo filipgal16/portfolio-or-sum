@@ -2,7 +2,7 @@
   --paper: #ececec;
   --ink: #0d0d0d;
   --muted: #444;
-  --display: 'Outfit', system-ui, sans-serif;
+  --display: 'Plus Jakarta Sans', system-ui, sans-serif;
   --headline: 'Kaushan Script', 'Brush Script MT', cursive;
   --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --pad: clamp(20px, 4vw, 88px);

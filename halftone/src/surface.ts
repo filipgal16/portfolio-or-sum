@@ -218,8 +218,9 @@ export function createSurface(
     canvas.height = Math.round(h * dpr);
     ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
     alloc();
-    // Setting the size clears the canvas; repaint at once so it never flashes.
-    if (visible || still) render(lastT);
+    // Setting the size clears the canvas to black. Paint one frame right away,
+    // even off screen, so a fast jump to a section never shows a black box.
+    render(lastT);
   }
 
   /** Light one grid node: normal from the gradient, Lambert-ish shade, fake AO. */
