@@ -291,9 +291,9 @@ a {
 
 .lists {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 32px;
-  max-width: 720px;
+  max-width: 900px;
   margin-top: clamp(40px, 6vw, 80px);
 }
 
@@ -317,6 +317,9 @@ a {
 @media (max-width: 720px) {
   .about {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .lists {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
