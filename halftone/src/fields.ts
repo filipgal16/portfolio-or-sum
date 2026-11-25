@@ -74,20 +74,42 @@ export function createRipples(max = 8): Ripples {
 
 // Surfaces -----------------------------------------------------------------
 
-/** Hero: the fold, calmed on the left so the headline stays readable, plus cursor bump and ripples. */
-export function heroField(ripples: Ripples): HeightFn {
+/**
+ * Boxes, in 0..1 canvas coordinates (u across, v down), where the hero's
+ * ridges flatten out so the text on top stays readable. The page measures
+ * where its text really is and writes the boxes here, so the calm areas
+ * follow the layout on every screen size.
+ */
+export interface CalmBoxes {
+  /** [u0, v0, u1, v1] per box. */
+  data: Float64Array;
+  count: number;
+  /** Width of the soft edge, as a fraction of the canvas width and height. */
+  featherU: number;
+  featherV: number;
+}
+
+export function createCalmBoxes(max = 6): CalmBoxes {
+  return { data: new Float64Array(max * 4), count: 0, featherU: 0.04, featherV: 0.04 };
+}
+
+/** Hero: the fold, calmed on the left and under the text, plus cursor bump and ripples. */
+export function heroField(ripples: Ripples, boxes: CalmBoxes): HeightFn {
   return (x, y, t, f) => {
     const u = (x / f.aspect + 1) * 0.5;
+    const v = (y + 1) * 0.5;
     let mask = 0.18 + 0.82 * smoothstep(0.06, 0.52, u);
-    // Keep the text readable: calm the band behind the top bar, the intro
-    // paragraph in the bottom-left, and (on narrow screens, where the headline
-    // spans the full width) the whole lower part.
-    let calm = 1 - smoothstep(-0.93, -0.74, y);
-    const intro = smoothstep(0.25, 0.7, y) * (1 - smoothstep(0.35, 0.75, u));
-    if (intro > calm) calm = intro;
-    if (f.aspect < 1.1) {
-      const low = smoothstep(-0.05, 0.55, y);
-      if (low > calm) calm = low;
+    // How far inside any text box this point is, with soft edges.
+    const d = boxes.data;
+    const fu = boxes.featherU;
+    const fv = boxes.featherV;
+    let calm = 0;
+    for (let i = 0, a = 0; i < boxes.count; i++, a += 4) {
+      const iu = smoothstep(d[a] - fu, d[a], u) * (1 - smoothstep(d[a + 2], d[a + 2] + fu, u));
+      if (iu <= 0) continue;
+      const iv = smoothstep(d[a + 1] - fv, d[a + 1], v) * (1 - smoothstep(d[a + 3], d[a + 3] + fv, v));
+      const c = iu * iv;
+      if (c > calm) calm = c;
     }
     mask += (0.12 - mask) * calm;
     return fold(x, y, t) * mask + bump(x, y, f, 0.32, 9) + ripples.sample(x, y, t);

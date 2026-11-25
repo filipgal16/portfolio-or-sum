@@ -138,6 +138,24 @@ a {
   pointer-events: none;
 }
 
+/* Tall portrait screens (phones, upright tablets) have far more height than
+   the text needs. Pinning the headline to the bottom leaves half the screen
+   empty, so instead the intro sits at the optical centre: the space above it
+   is a little smaller than the space below (1 : 1.35). */
+@media (orientation: portrait) and (max-aspect-ratio: 4/5) {
+  .hero__content {
+    display: grid;
+    grid-template-rows: auto minmax(32px, 1fr) auto minmax(32px, 1.35fr);
+    gap: 0;
+  }
+  .topbar {
+    grid-row: 1;
+  }
+  .hero__intro {
+    grid-row: 3;
+  }
+}
+
 .hero__content a {
   pointer-events: auto;
 }

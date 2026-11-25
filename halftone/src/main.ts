@@ -1,6 +1,6 @@
 import './style.css';
 import { createSurface, type HeightFn, type Surface } from './surface';
-import { ascent, createRipples, heroField, orbs, rings, strip } from './fields';
+import { ascent, createCalmBoxes, createRipples, heroField, orbs, rings, strip } from './fields';
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const surfaces: Surface[] = [];
@@ -15,7 +15,48 @@ const hero = document.querySelector<HTMLElement>('.hero');
 const heroCanvas = hero?.querySelector<HTMLCanvasElement>('canvas');
 if (hero && heroCanvas) {
   const ripples = createRipples(8);
-  const surface = createSurface(heroCanvas, heroField(ripples), {
+  const calm = createCalmBoxes(6);
+
+  // Measure where the hero's text actually is and flatten the ridges under
+  // it, so the text stays readable wherever the layout puts it. Runs before
+  // the surface is created so its observer fires first on every resize.
+  const PAD = 14;
+  const FEATHER = 56;
+  const textParts = ['.brand', '.nav ul', '.hero__title', '.lede'];
+  const textBox = (el: Element): DOMRect | null => {
+    // For text blocks, use the extent of the actual lines, not the full box.
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const rects = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+    if (rects.length === 0) return el.getBoundingClientRect();
+    const l = Math.min(...rects.map((r) => r.left));
+    const t = Math.min(...rects.map((r) => r.top));
+    const r = Math.max(...rects.map((r) => r.right));
+    const b = Math.max(...rects.map((r) => r.bottom));
+    return new DOMRect(l, t, r - l, b - t);
+  };
+  const measureCalm = (): void => {
+    const c = heroCanvas.getBoundingClientRect();
+    if (c.width === 0 || c.height === 0) return;
+    let n = 0;
+    for (const sel of textParts) {
+      const el = hero.querySelector(sel);
+      const b = el && textBox(el);
+      if (!b || n * 4 >= calm.data.length) continue;
+      calm.data[n * 4] = (b.left - PAD - c.left) / c.width;
+      calm.data[n * 4 + 1] = (b.top - PAD - c.top) / c.height;
+      calm.data[n * 4 + 2] = (b.right + PAD - c.left) / c.width;
+      calm.data[n * 4 + 3] = (b.bottom + PAD - c.top) / c.height;
+      n++;
+    }
+    calm.count = n;
+    calm.featherU = FEATHER / c.width;
+    calm.featherV = FEATHER / c.height;
+  };
+  measureCalm();
+  new ResizeObserver(measureCalm).observe(hero);
+
+  const surface = createSurface(heroCanvas, heroField(ripples, calm), {
     // Sizes at a 1440 px wide hero; they scale with the screen from there.
     step: 6,
     cell: 12,
@@ -29,6 +70,12 @@ if (hero && heroCanvas) {
     still: reduced,
   });
   surfaces.push(surface);
+
+  // Web fonts change the text's size once they arrive: measure again then.
+  document.fonts.ready.then(() => {
+    measureCalm();
+    surface.render(time);
+  });
 
   if (!reduced) {
     hero.addEventListener('click', (e) => {
