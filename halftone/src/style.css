@@ -2,7 +2,7 @@
   --paper: #ececec;
   --ink: #0d0d0d;
   --muted: #444;
-  --display: 'Geist', system-ui, sans-serif;
+  --display: 'Outfit', system-ui, sans-serif;
   --headline: 'Kaushan Script', 'Brush Script MT', cursive;
   --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --pad: clamp(20px, 4vw, 88px);
@@ -38,7 +38,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--display);
-  font-weight: 500;
+  font-weight: 400;
   font-size: clamp(1rem, 0.92rem + 0.25vw, 1.3rem);
   line-height: 1.45;
   font-optical-sizing: auto;
@@ -100,7 +100,7 @@ a {
 
 .display {
   font-family: var(--display);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 0.9;
   text-transform: lowercase;
