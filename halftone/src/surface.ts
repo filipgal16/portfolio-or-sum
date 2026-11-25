@@ -70,7 +70,12 @@ export interface Surface {
 const E = 0.012;
 /** Grids finer than this (in field units) differentiate between neighbouring nodes. */
 const NEIGHBOUR_E = 0.02;
-const EASE = 0.08;
+/** Spring stiffness (rad/s) for the pointer position: settles in about 0.9 s. */
+const POINTER_W = 5;
+/** Spring stiffness for the cursor bump fading in and out: about 1.1 s. */
+const PRESENCE_W = 4;
+/** Longest time step the springs integrate in one frame (s). */
+const MAX_DT = 0.05;
 const BUCKETS = 8;
 const TAU = Math.PI * 2;
 const SLOW_MS = 20;
@@ -136,6 +141,9 @@ export function createSurface(
   let targetX = rest[0];
   let targetY = rest[1];
   let targetPresence = 0;
+  let velX = 0;
+  let velY = 0;
+  let velP = 0;
 
   let visible = false;
   let lastT = options.t0 ?? 0;
@@ -198,13 +206,24 @@ export function createSurface(
   function render(t: number): void {
     if (W === 0 || H === 0) return;
     const started = performance.now();
+    let dt = t - lastT;
+    dt = dt < 0 ? 0 : dt > MAX_DT ? MAX_DT : dt;
     lastT = t;
     const c = ctx!;
 
-    // Ease the pointer.
-    field.nx += (targetX - field.nx) * EASE;
-    field.ny += (targetY - field.ny) * EASE;
-    field.presence += (targetPresence - field.presence) * EASE;
+    // Ease the pointer with critically damped springs. They start from rest
+    // and accelerate, so entering a canvas glides instead of snapping, and
+    // they run on elapsed time, so the feel is the same at any refresh rate.
+    const kx = POINTER_W * POINTER_W;
+    const dx = 2 * POINTER_W;
+    velX += (kx * (targetX - field.nx) - dx * velX) * dt;
+    velY += (kx * (targetY - field.ny) - dx * velY) * dt;
+    field.nx += velX * dt;
+    field.ny += velY * dt;
+    velP += (PRESENCE_W * PRESENCE_W * (targetPresence - field.presence) - 2 * PRESENCE_W * velP) * dt;
+    field.presence += velP * dt;
+    if (field.presence < 0) field.presence = 0;
+    else if (field.presence > 1) field.presence = 1;
     const aspect = W / H;
     field.aspect = aspect;
     field.px = field.nx * aspect;
