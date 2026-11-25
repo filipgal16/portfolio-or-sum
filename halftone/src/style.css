@@ -217,6 +217,7 @@ a {
   max-width: 34ch;
   margin-top: clamp(16px, 3vw, 40px);
   color: var(--muted);
+  font-weight: 500;
   font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.6rem);
   line-height: 1.4;
 }

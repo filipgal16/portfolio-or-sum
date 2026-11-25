@@ -22,6 +22,28 @@ if (hero && heroCanvas) {
   // the surface is created so its observer fires first on every resize.
   const PAD = 14;
   const FEATHER = 56;
+  // Behind the text the dots also fade out completely, over a soft edge, so
+  // the letters sit on clean paper. Boxes in canvas px: [left, top, right, bottom].
+  const DOT_PAD = 10;
+  const DOT_FEATHER = 24;
+  const clear = new Float64Array(6 * 4);
+  let clearCount = 0;
+  const ramp = (a: number, b: number, v: number): number => {
+    let u = (v - a) / (b - a);
+    u = u < 0 ? 0 : u > 1 ? 1 : u;
+    return u * u * (3 - 2 * u);
+  };
+  const dotFade = (x: number, y: number): number => {
+    let keep = 1;
+    for (let i = 0, a = 0; i < clearCount; i++, a += 4) {
+      const inX = ramp(clear[a] - DOT_FEATHER, clear[a], x) * (1 - ramp(clear[a + 2], clear[a + 2] + DOT_FEATHER, x));
+      if (inX <= 0) continue;
+      const inY = ramp(clear[a + 1] - DOT_FEATHER, clear[a + 1], y) * (1 - ramp(clear[a + 3], clear[a + 3] + DOT_FEATHER, y));
+      const k = 1 - inX * inY;
+      if (k < keep) keep = k;
+    }
+    return keep;
+  };
   const textParts = ['.brand', '.nav ul', '.hero__title', '.lede'];
   const textBox = (el: Element): DOMRect | null => {
     // For text blocks, use the extent of the actual lines, not the full box.
@@ -47,9 +69,14 @@ if (hero && heroCanvas) {
       calm.data[n * 4 + 1] = (b.top - PAD - c.top) / c.height;
       calm.data[n * 4 + 2] = (b.right + PAD - c.left) / c.width;
       calm.data[n * 4 + 3] = (b.bottom + PAD - c.top) / c.height;
+      clear[n * 4] = b.left - DOT_PAD - c.left;
+      clear[n * 4 + 1] = b.top - DOT_PAD - c.top;
+      clear[n * 4 + 2] = b.right + DOT_PAD - c.left;
+      clear[n * 4 + 3] = b.bottom + DOT_PAD - c.top;
       n++;
     }
     calm.count = n;
+    clearCount = n;
     calm.featherU = FEATHER / c.width;
     calm.featherV = FEATHER / c.height;
   };
@@ -67,6 +94,7 @@ if (hero && heroCanvas) {
     render3d: true,
     adaptive: true,
     eventTarget: hero,
+    dotFade,
     still: reduced,
   });
   surfaces.push(surface);

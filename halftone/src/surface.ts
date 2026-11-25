@@ -60,6 +60,11 @@ export interface SurfaceOptions {
   /** How many times the adaptive quality may coarsen step, then cell. */
   maxStepLevels?: number;
   maxCellLevels?: number;
+  /**
+   * Optional per-dot size multiplier (0..1) by position in CSS px. Return 0
+   * to leave clean paper there, for example behind text.
+   */
+  dotFade?: (x: number, y: number) => number;
   /** No animation loop: redraw a still frame whenever the canvas resizes or scrolls into view. */
   still?: boolean;
   /** Time used for still frames and before the first animated frame. */
@@ -107,6 +112,7 @@ export function createSurface(
   const adaptive = options.adaptive ?? false;
   const rest = options.rest ?? ([-0.55, -0.65] as const);
   const still = options.still ?? false;
+  const dotFade = options.dotFade;
   const maxStepLevels = options.maxStepLevels ?? 6;
   const maxCellLevels = options.maxCellLevels ?? 6;
 
@@ -361,7 +367,12 @@ export function createSurface(
         const s = top + (bottom - top) * ty;
         // Ink dots mark shadow; inverted light dots mark light.
         const tone = inv ? s : 1 - s;
-        const r = rMax * Math.pow(tone, 1.15);
+        let r = rMax * Math.pow(tone, 1.15);
+        if (dotFade) {
+          const k = dotFade(px, py);
+          if (k <= 0) continue;
+          r *= k;
+        }
         if (r < 0.35) continue;
         const near = (ty < 0.5 ? j0 : j0 + 1) * gc + (tx < 0.5 ? i0 : i0 + 1);
         const o = count * 3;
