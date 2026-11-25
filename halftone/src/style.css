@@ -182,7 +182,12 @@ a {
 
 /* Work -------------------------------------------------------------------- */
 
+/* The rows share the index's columns (subgrid), so the title column is as wide
+   as the longest title in any row and every row lines up. */
 .index {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(min-content, 1fr) minmax(0, 1fr) minmax(0, 420px);
+  column-gap: 32px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -190,10 +195,11 @@ a {
 }
 
 .row {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr) minmax(0, 1fr) minmax(0, 420px);
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 16px 32px;
+  row-gap: 16px;
   padding: clamp(20px, 2.6vw, 32px) 0;
   border-top: 1px solid var(--ink);
 }
@@ -204,8 +210,8 @@ a {
 }
 
 .row__title {
-  font-size: clamp(2.6rem, 6vw, 5.5rem);
-  line-height: 1;
+  font-size: clamp(2.4rem, 5vw, 4.75rem);
+  line-height: 0.95;
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -235,8 +241,8 @@ a {
 }
 
 @media (max-width: 1040px) {
-  .row {
-    grid-template-columns: 2.75rem minmax(0, 1fr) minmax(0, 1fr);
+  .index {
+    grid-template-columns: 2.75rem minmax(min-content, 1fr) minmax(0, 1fr);
   }
   .row__canvas {
     grid-column: 2 / -1;
@@ -245,7 +251,7 @@ a {
 }
 
 @media (max-width: 680px) {
-  .row {
+  .index {
     grid-template-columns: 2.25rem minmax(0, 1fr);
   }
   .row__meta,
@@ -255,7 +261,7 @@ a {
 }
 
 @media (max-width: 420px) {
-  .row {
+  .index {
     grid-template-columns: minmax(0, 1fr);
   }
   .row__meta,
@@ -349,6 +355,10 @@ a {
   font-size: clamp(1.25rem, 1rem + 1.6vw, 2.5rem);
   letter-spacing: -0.02em;
   overflow-wrap: anywhere;
+}
+
+.contact__link {
+  justify-self: start;
 }
 
 .contact__foot {
