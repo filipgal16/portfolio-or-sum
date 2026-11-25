@@ -48,9 +48,18 @@ export interface SurfaceOptions {
   eventTarget?: HTMLElement;
   /** Resting pointer, normalised ±1. The default puts the light at the top left. */
   rest?: readonly [number, number];
-  /** Coarsest values the adaptive quality may fall back to. */
-  maxStep?: number;
-  maxCell?: number;
+  /**
+   * Canvas width (CSS px) at which step, cell and grid are given as is. At
+   * other widths they scale with the canvas, clamped to [scaleMin, scaleMax],
+   * so the dots look the same on a phone and a 4K monitor and the frame cost
+   * stays bounded. Omit to keep them fixed.
+   */
+  scaleRef?: number;
+  scaleMin?: number;
+  scaleMax?: number;
+  /** How many times the adaptive quality may coarsen step, then cell. */
+  maxStepLevels?: number;
+  maxCellLevels?: number;
   /** No animation loop: redraw a still frame whenever the canvas resizes or scrolls into view. */
   still?: boolean;
   /** Time used for still frames and before the first animated frame. */
@@ -98,8 +107,8 @@ export function createSurface(
   const adaptive = options.adaptive ?? false;
   const rest = options.rest ?? ([-0.55, -0.65] as const);
   const still = options.still ?? false;
-  const maxStep = options.maxStep ?? Math.round(options.step * 2);
-  const maxCell = options.maxCell ?? Math.round(options.cell * 1.6);
+  const maxStepLevels = options.maxStepLevels ?? 6;
+  const maxCellLevels = options.maxCellLevels ?? 6;
 
   const paper = inv ? '#0d0d0d' : '#ececec';
   const inkRGB = inv ? '236,236,236' : '13,13,13';
@@ -111,8 +120,13 @@ export function createSurface(
     bucketStyle.push(`rgba(${inkRGB},${(0.3 + (0.7 * (b + 0.5)) / BUCKETS).toFixed(3)})`);
   }
 
+  // Current sizes: the scaled base plus whatever the adaptive quality added.
   let step = options.step;
   let cell = options.cell;
+  let gridX = grid ? grid[0] : 0;
+  let gridY = grid ? grid[1] : 0;
+  let stepLevels = 0;
+  let cellLevels = 0;
 
   // Canvas size in CSS px.
   let W = 0;
@@ -150,7 +164,25 @@ export function createSurface(
   let ema = 0;
   let slowFrames = 0;
 
+  /** Base sizes for the current width, plus the adaptive levels (each 1 px). */
+  function sizes(): void {
+    let k = 1;
+    if (options.scaleRef) {
+      k = W / options.scaleRef;
+      const lo = options.scaleMin ?? 0.75;
+      const hi = options.scaleMax ?? 2;
+      k = k < lo ? lo : k > hi ? hi : k;
+    }
+    step = options.step * k + stepLevels;
+    cell = options.cell * k + cellLevels;
+    if (grid) {
+      gridX = grid[0] * k;
+      gridY = grid[1] * k;
+    }
+  }
+
   function alloc(): void {
+    sizes();
     gc = Math.ceil(W / step) + 2;
     gr = Math.ceil(H / step) + 2;
     const n = gc * gr;
@@ -298,8 +330,8 @@ export function createSurface(
 
     if (grid) {
       c.fillStyle = gridStyle;
-      for (let x = grid[0]; x < W; x += grid[0]) c.fillRect(Math.round(x), 0, 1, H);
-      for (let y = grid[1]; y < H; y += grid[1]) c.fillRect(0, Math.round(y), W, 1);
+      for (let x = gridX; x < W; x += gridX) c.fillRect(Math.round(x), 0, 1, H);
+      for (let y = gridY; y < H; y += gridY) c.fillRect(0, Math.round(y), W, 1);
     }
 
     // 5. Halftone dots.
@@ -369,8 +401,8 @@ export function createSurface(
         if (++slowFrames > SLOW_FRAMES) {
           slowFrames = 0;
           ema = 0;
-          if (step < maxStep) step++;
-          else if (cell < maxCell) cell++;
+          if (stepLevels < maxStepLevels) stepLevels++;
+          else if (cellLevels < maxCellLevels) cellLevels++;
           else return;
           alloc();
         }
@@ -401,6 +433,20 @@ export function createSurface(
   // Size and visibility.
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
+
+  // Pixel density can change without a resize (dragging the window to another
+  // monitor, browser zoom), so watch it and redraw at the new resolution.
+  let dprQuery: MediaQueryList | null = null;
+  const onDpr = (): void => {
+    watchDpr();
+    resize();
+  };
+  function watchDpr(): void {
+    dprQuery?.removeEventListener('change', onDpr);
+    dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+    dprQuery.addEventListener('change', onDpr);
+  }
+  watchDpr();
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -430,6 +476,7 @@ export function createSurface(
     destroy() {
       ro.disconnect();
       io.disconnect();
+      dprQuery?.removeEventListener('change', onDpr);
       target.removeEventListener('pointermove', onMove);
       target.removeEventListener('pointerdown', onMove);
       target.removeEventListener('pointerleave', onLeave);

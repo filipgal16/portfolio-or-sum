@@ -3,10 +3,14 @@
   --ink: #0d0d0d;
   --muted: #444;
   --display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --script: 'Style Script', 'Brush Script MT', cursive;
-  --body: 'Inter Tight', system-ui, sans-serif;
+  --headline: 'Pacifico', 'Brush Script MT', cursive;
   --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
-  --pad: clamp(20px, 4vw, 56px);
+  --pad: clamp(20px, 4vw, 88px);
+  /* Side padding that also clears notches and rounded corners on phones. */
+  --pad-l: max(var(--pad), env(safe-area-inset-left));
+  --pad-r: max(var(--pad), env(safe-area-inset-right));
+  --label-size: clamp(0.75rem, 0.62rem + 0.16vw, 0.95rem);
+  --row-canvas: clamp(300px, 29vw, 680px);
   color-scheme: light;
 }
 
@@ -24,15 +28,18 @@ body {
 
 html {
   scroll-behavior: smooth;
+  /* Stop phones from inflating text in landscape. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--body);
+  font-family: var(--display);
   font-weight: 500;
-  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  font-size: clamp(1rem, 0.92rem + 0.25vw, 1.3rem);
   line-height: 1.45;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
@@ -60,14 +67,14 @@ a {
 
 .skip {
   position: absolute;
-  left: var(--pad);
+  left: var(--pad-l);
   top: -100px;
   z-index: 10;
   padding: 10px 14px;
   background: var(--ink);
   color: var(--paper);
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: var(--label-size);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -81,7 +88,7 @@ a {
 .label {
   font-family: var(--mono);
   font-weight: 400;
-  font-size: 0.75rem;
+  font-size: var(--label-size);
   line-height: 1.5;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -104,7 +111,10 @@ a {
 .hero {
   position: relative;
   display: flex;
-  min-height: 820px;
+  /* Fill the screen on any device. svh ignores the phone URL bar, so the
+     canvas does not resize while scrolling. */
+  min-height: max(420px, 100vh);
+  min-height: max(420px, 100svh);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -123,8 +133,8 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 48px;
-  padding: var(--pad);
+  gap: clamp(32px, 6svh, 64px);
+  padding: max(var(--pad), env(safe-area-inset-top)) var(--pad-r) max(var(--pad), env(safe-area-inset-bottom)) var(--pad-l);
   pointer-events: none;
 }
 
@@ -156,33 +166,33 @@ a {
   list-style: none;
 }
 
-/* Style Script has one weight and joined letters, so it keeps normal tracking. */
+/* Pacifico: one weight, joined letters, so normal tracking and no case change. */
 .hero__title {
-  /* Wide enough for "systems that", too narrow for "systems that look",
-     so it breaks into the same two lines as before. */
-  max-width: 4.2em;
-  font-family: var(--script);
+  /* Wide enough for "systems that" (5.26em), too narrow for "systems that
+     look" (7.28em), so it always breaks into the same two lines. */
+  max-width: 5.6em;
+  font-family: var(--headline);
   font-weight: 400;
   letter-spacing: 0;
-  /* Script letters run small, so narrow screens get a larger size to fill
-     the width the old bold headline did. Desktop keeps the same 12rem cap. */
-  font-size: clamp(3.4rem, 20vw, 12rem);
-  /* A touch looser than the old 0.86 so the y's tail clears "look". */
-  line-height: 0.98;
+  /* Sized by the smaller of width and height, so it fits phones, landscape
+     phones, laptops and big monitors alike. */
+  font-size: clamp(2.75rem, min(15vw, 22vh), 18rem);
+  font-size: clamp(2.75rem, min(15vw, 22svh), 18rem);
+  line-height: 1.2;
 }
 
 .lede {
   max-width: 34ch;
-  margin-top: clamp(20px, 3vw, 36px);
+  margin-top: clamp(16px, 3vw, 40px);
   color: var(--muted);
-  font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.35rem);
+  font-size: clamp(1.05rem, 0.9rem + 0.5vw, 1.6rem);
   line-height: 1.4;
 }
 
 /* Sections ---------------------------------------------------------------- */
 
 .section {
-  padding: clamp(72px, 10vw, 160px) var(--pad);
+  padding: clamp(72px, 10vw, 200px) var(--pad-r) clamp(72px, 10vw, 200px) var(--pad-l);
 }
 
 .section-head {
@@ -198,8 +208,8 @@ a {
    as the longest title in any row and every row lines up. */
 .index {
   display: grid;
-  grid-template-columns: 3.5rem minmax(min-content, 1fr) minmax(0, 1fr) minmax(0, 420px);
-  column-gap: 32px;
+  grid-template-columns: 3.5rem minmax(min-content, 1fr) minmax(0, 1fr) minmax(0, var(--row-canvas));
+  column-gap: clamp(20px, 2.2vw, 48px);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -222,7 +232,7 @@ a {
 }
 
 .row__title {
-  font-size: clamp(2.4rem, 5vw, 4.75rem);
+  font-size: clamp(2.4rem, 5vw, 6.5rem);
   line-height: 0.95;
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -231,7 +241,14 @@ a {
   text-decoration: none;
 }
 
-.row:hover .row__title,
+/* Only real hover devices shift on hover; on touch screens a tap would leave
+   the title stuck shifted. Keyboard focus shifts it everywhere. */
+@media (hover: hover) {
+  .row:hover .row__title {
+    transform: translateX(20px);
+  }
+}
+
 .row:focus-within .row__title {
   transform: translateX(20px);
 }
@@ -248,7 +265,7 @@ a {
   display: block;
   justify-self: end;
   width: 100%;
-  max-width: 420px;
+  max-width: var(--row-canvas);
   aspect-ratio: 220 / 80;
 }
 
@@ -296,7 +313,7 @@ a {
 
 .statement {
   max-width: 26ch;
-  font-size: clamp(1.6rem, 1rem + 2.6vw, 3.4rem);
+  font-size: clamp(1.6rem, 1rem + 2.6vw, 4.4rem);
   line-height: 1.08;
   letter-spacing: -0.025em;
 }
@@ -304,8 +321,8 @@ a {
 .lists {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 32px;
-  max-width: 900px;
+  gap: clamp(20px, 2.2vw, 48px);
+  max-width: max(900px, 55vw);
   margin-top: clamp(40px, 6vw, 80px);
 }
 
@@ -320,7 +337,7 @@ a {
   padding: 0;
   list-style: none;
   font-family: var(--mono);
-  font-size: 0.8125rem;
+  font-size: clamp(0.8125rem, 0.68rem + 0.15vw, 1rem);
   line-height: 2;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -351,23 +368,23 @@ a {
 .contact__strip {
   display: block;
   width: 100%;
-  height: clamp(120px, 15vw, 220px);
+  height: clamp(120px, 15vw, 300px);
 }
 
 .contact__inner {
   display: grid;
   gap: 24px;
-  padding: clamp(56px, 8vw, 120px) var(--pad) clamp(48px, 6vw, 88px);
+  padding: clamp(56px, 8vw, 160px) var(--pad-r) clamp(48px, 6vw, 112px) var(--pad-l);
 }
 
 .contact__title {
-  font-size: clamp(3.6rem, 15vw, 14rem);
+  font-size: clamp(3.6rem, 15vw, 18rem);
   line-height: 0.86;
 }
 
 .email {
   justify-self: start;
-  font-size: clamp(1.25rem, 1rem + 1.6vw, 2.5rem);
+  font-size: clamp(1.25rem, 1rem + 1.6vw, 3.2rem);
   letter-spacing: -0.02em;
   overflow-wrap: anywhere;
 }
@@ -381,7 +398,7 @@ a {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px 24px;
-  padding: 0 var(--pad) var(--pad);
+  padding: 0 var(--pad-r) max(var(--pad), env(safe-area-inset-bottom)) var(--pad-l);
 }
 
 .contact__foot a {

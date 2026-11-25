@@ -16,10 +16,14 @@ const heroCanvas = hero?.querySelector<HTMLCanvasElement>('canvas');
 if (hero && heroCanvas) {
   const ripples = createRipples(8);
   const surface = createSurface(heroCanvas, heroField(ripples), {
+    // Sizes at a 1440 px wide hero; they scale with the screen from there.
     step: 6,
     cell: 12,
-    render3d: true,
     grid: [160, 170],
+    scaleRef: 1440,
+    scaleMin: 0.8,
+    scaleMax: 2,
+    render3d: true,
     adaptive: true,
     eventTarget: hero,
     still: reduced,
@@ -42,7 +46,16 @@ for (const canvas of document.querySelectorAll<HTMLCanvasElement>('canvas[data-f
   const fn = rowFields[canvas.dataset.field ?? ''];
   if (!fn) continue;
   surfaces.push(
-    createSurface(canvas, fn, { step: 8, cell: 7, strength: 1, adaptive: true, still: reduced }),
+    createSurface(canvas, fn, {
+      step: 8,
+      cell: 7,
+      scaleRef: 420,
+      scaleMin: 0.8,
+      scaleMax: 1.6,
+      strength: 1,
+      adaptive: true,
+      still: reduced,
+    }),
   );
 }
 
@@ -51,7 +64,16 @@ for (const canvas of document.querySelectorAll<HTMLCanvasElement>('canvas[data-f
 const stripCanvas = document.querySelector<HTMLCanvasElement>('.contact__strip');
 if (stripCanvas) {
   surfaces.push(
-    createSurface(stripCanvas, strip, { step: 8, cell: 9, inv: true, adaptive: true, still: reduced }),
+    createSurface(stripCanvas, strip, {
+      step: 8,
+      cell: 9,
+      scaleRef: 1440,
+      scaleMin: 0.8,
+      scaleMax: 2,
+      inv: true,
+      adaptive: true,
+      still: reduced,
+    }),
   );
 }
 
