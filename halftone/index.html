@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>[YOUR NAME] — Portfolio</title>
+    <meta name="description" content="[ONE-SENTENCE DESCRIPTION OF YOU AND YOUR WORK]" />
+    <meta name="theme-color" content="#ececec" />
+    <link rel="icon" href="data:," />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=DM+Mono:wght@400&display=swap"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="hero" id="top">
+      <canvas class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__content">
+        <div class="topbar">
+          <a class="label brand" href="#top">[YOUR NAME] / Portfolio [YEAR]</a>
+          <nav class="nav" aria-label="Primary">
+            <ul>
+              <li><a class="label" href="#work">Work</a></li>
+              <li><a class="label" href="#about">About</a></li>
+              <li><a class="label" href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="hero__intro">
+          <h1 class="display hero__title">systems that look back</h1>
+          <p class="lede">
+            [A SHORT INTRO, ONE OR TWO SENTENCES: WHO YOU ARE, WHAT YOU BUILD, AND FOR WHOM.]
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="section work" id="work" aria-labelledby="work-title">
+        <div class="section-head">
+          <h2 class="label" id="work-title">Selected work</h2>
+          <p class="label muted">(03)</p>
+        </div>
+        <ol class="index">
+          <li class="row">
+            <span class="label row__num">01</span>
+            <h3 class="display row__title"><a href="#">ascent</a></h3>
+            <div class="row__meta">
+              <p class="label muted">[ROLE] · [YEAR]</p>
+              <p class="row__desc">[ONE-LINE DESCRIPTION OF THE PROJECT.]</p>
+            </div>
+            <canvas class="row__canvas" data-field="ascent" aria-hidden="true"></canvas>
+          </li>
+          <li class="row">
+            <span class="label row__num">02</span>
+            <h3 class="display row__title"><a href="#">drift</a></h3>
+            <div class="row__meta">
+              <p class="label muted">[ROLE] · [YEAR]</p>
+              <p class="row__desc">[ONE-LINE DESCRIPTION OF THE PROJECT.]</p>
+            </div>
+            <canvas class="row__canvas" data-field="drift" aria-hidden="true"></canvas>
+          </li>
+          <li class="row">
+            <span class="label row__num">03</span>
+            <h3 class="display row__title"><a href="#">ripple</a></h3>
+            <div class="row__meta">
+              <p class="label muted">[ROLE] · [YEAR]</p>
+              <p class="row__desc">[ONE-LINE DESCRIPTION OF THE PROJECT.]</p>
+            </div>
+            <canvas class="row__canvas" data-field="ripple" aria-hidden="true"></canvas>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section about" id="about" aria-labelledby="about-title">
+        <h2 class="label" id="about-title">About</h2>
+        <div class="about__body">
+          <p class="statement">
+            [A LARGE STATEMENT ABOUT HOW YOU WORK: WHAT YOU CARE ABOUT, THE KIND OF PROBLEMS YOU
+            TAKE ON, AND WHAT PEOPLE CAN EXPECT WHEN THEY WORK WITH YOU.]
+          </p>
+          <div class="lists">
+            <div>
+              <h3 class="label muted list-title">Disciplines</h3>
+              <ul class="mono-list">
+                <li>[DISCIPLINE]</li>
+                <li>[DISCIPLINE]</li>
+                <li>[DISCIPLINE]</li>
+                <li>[DISCIPLINE]</li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="label muted list-title">Tools</h3>
+              <ul class="mono-list">
+                <li>[TOOL]</li>
+                <li>[TOOL]</li>
+                <li>[TOOL]</li>
+                <li>[TOOL]</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="contact" id="contact" aria-labelledby="contact-title">
+      <canvas class="contact__strip" aria-hidden="true"></canvas>
+      <div class="contact__inner">
+        <p class="label">Contact</p>
+        <h2 class="display contact__title" id="contact-title">say hello</h2>
+        <a class="email" href="mailto:[EMAIL]">[EMAIL]</a>
+      </div>
+      <footer class="contact__foot">
+        <p class="label">© [YEAR] [YOUR NAME]</p>
+        <a class="label" href="#top">Back to top</a>
+      </footer>
+    </section>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
