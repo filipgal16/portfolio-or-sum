@@ -3,6 +3,8 @@
   --ink: #0d0d0d;
   --muted: #444;
   --display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --script: 'Style Script', 'Brush Script MT', cursive;
+  --body: 'Inter Tight', system-ui, sans-serif;
   --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --pad: clamp(20px, 4vw, 56px);
   color-scheme: light;
@@ -28,7 +30,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--display);
+  font-family: var(--body);
   font-weight: 500;
   font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
   line-height: 1.45;
@@ -90,6 +92,7 @@ a {
 }
 
 .display {
+  font-family: var(--display);
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 0.9;
@@ -153,10 +156,19 @@ a {
   list-style: none;
 }
 
+/* Style Script has one weight and joined letters, so it keeps normal tracking. */
 .hero__title {
-  max-width: 11ch;
-  font-size: clamp(3.4rem, 12.6vw, 12rem);
-  line-height: 0.86;
+  /* Wide enough for "systems that", too narrow for "systems that look",
+     so it breaks into the same two lines as before. */
+  max-width: 4.2em;
+  font-family: var(--script);
+  font-weight: 400;
+  letter-spacing: 0;
+  /* Script letters run small, so narrow screens get a larger size to fill
+     the width the old bold headline did. Desktop keeps the same 12rem cap. */
+  font-size: clamp(3.4rem, 20vw, 12rem);
+  /* A touch looser than the old 0.86 so the y's tail clears "look". */
+  line-height: 0.98;
 }
 
 .lede {
