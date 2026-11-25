@@ -23,6 +23,26 @@ if (hero && heroCanvas) {
   const PAD = 14;
   const FEATHER = 56;
   const textParts = ['.brand', '.nav ul', '.hero__title', '.lede'];
+
+  // Behind the small intro paragraph the dots stay but turn a light grey, so
+  // the text reads clearly on top. Box in canvas px: [left, top, right, bottom].
+  const TINT = 0.35;
+  const TINT_PAD = 12;
+  const TINT_FEATHER = 28;
+  const lede = [0, 0, 0, 0];
+  let hasLede = false;
+  const ramp = (a: number, b: number, v: number): number => {
+    let u = (v - a) / (b - a);
+    u = u < 0 ? 0 : u > 1 ? 1 : u;
+    return u * u * (3 - 2 * u);
+  };
+  const dotTint = (x: number, y: number): number => {
+    if (!hasLede) return 1;
+    const inX = ramp(lede[0] - TINT_FEATHER, lede[0], x) * (1 - ramp(lede[2], lede[2] + TINT_FEATHER, x));
+    if (inX <= 0) return 1;
+    const inY = ramp(lede[1] - TINT_FEATHER, lede[1], y) * (1 - ramp(lede[3], lede[3] + TINT_FEATHER, y));
+    return 1 - (1 - TINT) * inX * inY;
+  };
   const textBox = (el: Element): DOMRect | null => {
     // For text blocks, use the extent of the actual lines, not the full box.
     const range = document.createRange();
@@ -47,6 +67,13 @@ if (hero && heroCanvas) {
       calm.data[n * 4 + 1] = (b.top - PAD - c.top) / c.height;
       calm.data[n * 4 + 2] = (b.right + PAD - c.left) / c.width;
       calm.data[n * 4 + 3] = (b.bottom + PAD - c.top) / c.height;
+      if (sel === '.lede') {
+        lede[0] = b.left - TINT_PAD - c.left;
+        lede[1] = b.top - TINT_PAD - c.top;
+        lede[2] = b.right + TINT_PAD - c.left;
+        lede[3] = b.bottom + TINT_PAD - c.top;
+        hasLede = true;
+      }
       n++;
     }
     calm.count = n;
@@ -67,6 +94,7 @@ if (hero && heroCanvas) {
     render3d: true,
     adaptive: true,
     eventTarget: hero,
+    dotTint,
     still: reduced,
   });
   surfaces.push(surface);

@@ -65,6 +65,11 @@ export interface SurfaceOptions {
    * to leave clean paper there, for example behind text.
    */
   dotFade?: (x: number, y: number) => number;
+  /**
+   * Optional per-dot darkness multiplier (0..1) by position in CSS px. Below 1
+   * the dot keeps its size but is drawn lighter, for example behind text.
+   */
+  dotTint?: (x: number, y: number) => number;
   /** No animation loop: redraw a still frame whenever the canvas resizes or scrolls into view. */
   still?: boolean;
   /** Time used for still frames and before the first animated frame. */
@@ -90,7 +95,7 @@ const POINTER_W = 5;
 const PRESENCE_W = 4;
 /** Longest time step the springs integrate in one frame (s). */
 const MAX_DT = 0.05;
-const BUCKETS = 8;
+const BUCKETS = 12;
 const TAU = Math.PI * 2;
 const SLOW_MS = 20;
 const SLOW_FRAMES = 40;
@@ -113,17 +118,18 @@ export function createSurface(
   const rest = options.rest ?? ([-0.55, -0.65] as const);
   const still = options.still ?? false;
   const dotFade = options.dotFade;
+  const dotTint = options.dotTint;
   const maxStepLevels = options.maxStepLevels ?? 6;
   const maxCellLevels = options.maxCellLevels ?? 6;
 
   const paper = inv ? '#0d0d0d' : '#ececec';
   const inkRGB = inv ? '236,236,236' : '13,13,13';
   const gridStyle = inv ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
-  // Dot alpha is 0.3 + 0.7·tone; dots are batched into BUCKETS alpha levels so
+  // Dot alpha is (0.3 + 0.7·tone) × tint; dots are batched into BUCKETS alpha levels so
   // each frame needs only a handful of fill() calls.
   const bucketStyle: string[] = [];
   for (let b = 0; b < BUCKETS; b++) {
-    bucketStyle.push(`rgba(${inkRGB},${(0.3 + (0.7 * (b + 0.5)) / BUCKETS).toFixed(3)})`);
+    bucketStyle.push(`rgba(${inkRGB},${((b + 0.5) / BUCKETS).toFixed(3)})`);
   }
 
   // Current sizes: the scaled base plus whatever the adaptive quality added.
@@ -379,7 +385,9 @@ export function createSurface(
         dots[o] = px + gradX[near] * offX;
         dots[o + 1] = py + gradY[near] * offY;
         dots[o + 2] = r;
-        let b = (tone * BUCKETS) | 0;
+        let alpha = 0.3 + 0.7 * tone;
+        if (dotTint) alpha *= dotTint(px, py);
+        let b = (alpha * BUCKETS) | 0;
         if (b >= BUCKETS) b = BUCKETS - 1;
         dotBucket[count] = b;
         count++;
