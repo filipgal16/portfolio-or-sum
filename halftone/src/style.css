@@ -3,7 +3,7 @@
   --ink: #0d0d0d;
   --muted: #444;
   --display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --headline: 'Pacifico', 'Brush Script MT', cursive;
+  --headline: 'Kaushan Script', 'Brush Script MT', cursive;
   --mono: 'DM Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
   --pad: clamp(20px, 4vw, 88px);
   /* Side padding that also clears notches and rounded corners on phones. */
@@ -166,11 +166,11 @@ a {
   list-style: none;
 }
 
-/* Pacifico: one weight, joined letters, so normal tracking and no case change. */
+/* Kaushan Script: one weight, brush letters, so normal tracking and no case change. */
 .hero__title {
-  /* Wide enough for "systems that" (5.26em), too narrow for "systems that
-     look" (7.28em), so it always breaks into the same two lines. */
-  max-width: 5.6em;
+  /* Wide enough for "systems that" (4.96em), too narrow for "systems that
+     look" (6.83em), so it always breaks into the same two lines. */
+  max-width: 5.3em;
   font-family: var(--headline);
   font-weight: 400;
   letter-spacing: 0;
@@ -178,7 +178,7 @@ a {
      phones, laptops and big monitors alike. */
   font-size: clamp(2.75rem, min(15vw, 22vh), 18rem);
   font-size: clamp(2.75rem, min(15vw, 22svh), 18rem);
-  line-height: 1.2;
+  line-height: 1.05;
 }
 
 .lede {
