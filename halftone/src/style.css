@@ -356,7 +356,7 @@ a {
   max-width: 26ch;
   font-size: clamp(1.6rem, 1rem + 2.6vw, 4.4rem);
   line-height: 1.08;
-  letter-spacing: -0.025em;
+  letter-spacing: 0;
 }
 
 .lists {
